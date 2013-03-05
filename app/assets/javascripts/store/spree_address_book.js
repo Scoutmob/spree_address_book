@@ -4,9 +4,7 @@
   $(document).ready(function(){
     if ($(".select_address").length) {
       $('input#order_use_billing').unbind("click");
-      $(".inner").hide();
-      $(".inner input").prop("disabled", true);
-      $(".inner select").prop("disabled", true);
+      $("[data-hook=billing_inner], [data-hook=shipping_inner]").hide().find('input, select').prop("disabled", true);
       if ($('input#order_use_billing').is(':checked')) {
         $("#shipping .select_address").hide();
       }
