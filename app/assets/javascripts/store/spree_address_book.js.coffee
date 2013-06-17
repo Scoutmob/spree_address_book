@@ -2,13 +2,16 @@
 
   $ ->
     if ($ ".select_address").length
-      ($ 'input#order_use_billing').unbind("click")
-      ($ "[data-hook=billing_inner], [data-hook=shipping_inner]").hide().find('input, select').prop("disabled", true)
+      # hide address entry forms and disable all the fields (to avoid validation)
+      ($ "[data-hook=billing_inner], [data-hook=shipping_inner]").hide().
+        find('input, select').prop("disabled", true)
 
       if ($ 'input#order_use_billing').is(':checked') 
         ($ "#shipping .select_address").hide()
-      
-      ($ 'input#order_use_billing').click ->
+
+      # unbind the default use billing address handler and replace with one that
+      # will show the save addresses
+      ($ 'input#order_use_billing').unbind("click").click ->
         if ($ this).is(':checked')
           ($ "#shipping .select_address").hide()
           hide_address_form('shipping')
@@ -30,14 +33,25 @@
           hide_address_form('shipping')
 
   hide_address_form = (address_type) ->
-    $("##{address_type} .inner").hide()
-    $("##{address_type} .inner input").prop("disabled", true)
-    $("##{address_type} .inner select").prop("disabled", true)
-  
+    ($ "##{address_type}").
+      find(".inner").hide().
+      find("input, select").prop("disabled", true).
+      end().end().
+      trigger('spree_address_book:hide')
+
   show_address_form = (address_type) ->
-    $("##{address_type} .inner").show()
-    $("##{address_type} .inner input").prop("disabled", false)
-    $("##{address_type} .inner select").prop("disabled", false)
+    $addressFieldSet = ($ "##{address_type}")
+    $addressFieldSet.
+      find(".inner").show().
+      find("input, select").prop("disabled", false)
+
+    $stateField = $addressFieldSet.find("##{address_type[0]}state")
+    if $stateField.find("select option").length
+      $stateField.find('input').hide().prop 'disabled', true
+    else
+      $stateField.find("select").hide().prop 'disabled', true
+
+    $addressFieldSet.trigger('spree_address_book:show')
 
 )(jQuery)
 
