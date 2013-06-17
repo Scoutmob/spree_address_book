@@ -4,7 +4,7 @@
     <p class="field">
       <% @addresses.each_with_index do |address, idx| %>
       <span id="<%= [address_type, dom_id(address)].join('_') %>">
-        <label><%= form.radio_button "#{address_name}_id", address.id, :checked => (idx == 0) %> <%= address %></label> <%= link_to t(:edit), edit_address_path(address) %><br />
+        <label><%= form.radio_button "#{address_name}_id", address.id, :checked => ((@order.attributes["#{address_name}_id"].nil? and idx == 0) or (@order.attributes["#{address_name}_id"] == address.id)) %> <%= address %></label> <%= link_to t(:edit), edit_address_path(address) %><br />
       </span>
       <% end %>
       <label><%= form.radio_button "#{address_name}_id", 0 %> <%= t('other_address', :scope => :address_book) %></label>
